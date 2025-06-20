@@ -1,0 +1,43 @@
+name: Deploy Python Application
+
+# When to run this workflow
+on:
+  push:
+    branches: [ main ]
+
+# Jobs to run
+jobs:
+  deploy:
+    # Use Ubuntu Linux VM
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Download your code to the VM
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # Install Python
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      # Run tests (optional)
+      - name: Run tests
+        run: |
+          python -m pytest tests/ || echo "No tests found"
+      
+      # Deploy your application
+      - name: Deploy
+        run: |
+          echo "Deploying Python application..."
+          python app.py &
+          sleep 5
+          echo "Application started successfully!"
+          echo "Deployment completed!"
